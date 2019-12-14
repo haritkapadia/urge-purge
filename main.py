@@ -1,8 +1,6 @@
 #!/bin/env python
 
-import flask
 import os
-import proxy
 import psutil
 import requests
 import signal
