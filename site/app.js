@@ -21,7 +21,10 @@ app.get('/sites.json', function (req, res) {
 })
 
 app.post('/sites.html',function(req,res){
-    badSites = Array.from(new Set(Object.keys(req.body)));
+    badSites = Array.from(new Set(Object.keys(req.body).map((ll) => {
+      return url.parse(ll).hostname;
+    })));
+
     fs.writeFile('sites.json', JSON.stringify(badSites), (err) => {
         if(err)
             throw err;
