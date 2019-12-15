@@ -47,12 +47,43 @@
 		}*/
     </style>
     <script type="text/javascript">
+      Promise.resolve($.getJSON('/sites.json')).then(function(val){
+          console.log(val);
+          const make_entry = (name, idx) => {
+              console.log(name, idx);
+              $('#sitesHere').append($('<div/>', {
+                  id: '' + idx,
+                  class: "form-group row"
+              }));
+              $('#' + idx).append($('<input/>', {
+                  id: 'i' + idx,
+                  placeholder: name,
+                  name: name,
+                  class: "col form-control-plaintext"
+              }));
+              const b = $('<button/>', {
+                  i: 'b' + idx,
+                  class: "btn btn-secondary"
+              });
+              b.append('X');
+              b.click(() => {
+                  b.parent().remove();
+              });
+              $('#' + idx).append(b);
+          };
+          let i = 0;
+          $('#linkAdd').click(() => {
+              i += 1;
+              console.log('#linkAdd clicked');
+              make_entry($('#linkInput')[0].value, i);
+              $('#linkInput')[0].value = '';
+          });
 
-        Promise.resolve($.getJSON('/sites.json')).then(function(val){
-            for(var x = 0 ; x < val.length; x++){
-                $('#sitesHere').append('<p id='+x+'>'+val[x]+'<p>\n');
-            }
-        });
+          for(var x = 0; x < val.length; x++){
+              make_entry(val[i], i);
+              i += 1;
+          }
+      });
     </script>
     <title>Impulse Delayer</title>
 </head>
@@ -95,23 +126,28 @@
 
     <!-- input field -->
     <div class="jumbotron py-3">
-        <form action="/sites.html" method="POST" class="form-inline">
-            <div class="form-group">
-                <label for="staticLink" class="sr-only">Link Enter</label>
-                <input type="text" readonly class="form-control-plaintext" id="staticLink" value="Enter your link: ">
-            </div>
-            <div class="form-group mr-sm-3">
-                <label for="linkInput" class="sr-only">Link</label>
-                <input type="Link" name = "link" class="form-control" id="linkInput" placeholder="Link">
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+      <form action="/sites.html" method="POST" class="form">
+        <div class="form-group">
+          <label for="linkInput">Enter your link</label>
+          <div class="row form-group">
+            <input type="Link" class="col form-control" id="linkInput" placeholder="Link">
+            <button id="linkAdd" class="btn btn-info" type="button">Add</button>
+          </div>
+        </div>
+
+        <!-- list of current sites -->
+        <div class="form-group">
+          <div id="sitesHere" class="jumbotron py-2"/>
+        </div>
+        
+        <div class="btn-group" role="group">
+          <button class="btn btn-light" type="button" onclick="window.location.href = '/sites.html'">Cancel</button>
+          <button class="btn btn-primary" type="submit">Save Changes</button>
+        </div>
+      </form>
     </div>
 
-    <!-- list of current sites -->
-    <div id="sitesHere" class="jumbotron py-2">
 
-    </div>
     <footer>
 
     </footer>

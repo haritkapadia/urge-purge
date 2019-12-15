@@ -3,12 +3,12 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 
-badSites=[]
-badPrograms=[]
+let badSites = JSON.parse(fs.readFileSync('sites.json').toString('utf8'));
+let badPrograms = JSON.parse(fs.readFileSync('desktop.json').toString('utf8'));
 
 app.use(bodyParser());
 
@@ -21,23 +21,28 @@ app.get('/sites.json', function (req, res) {
 })
 
 app.post('/sites.html',function(req,res){
-  var link = url.parse(req.body.link).host;
-  if(link != null && link.length>0){  
-    badSites.push(link);
-  }
+    badSites = Array.from(new Set(Object.keys(req.body)));
+    fs.writeFile('sites.json', JSON.stringify(badSites), (err) => {
+        if(err)
+            throw err;
+    }); 
+    console.log();
   res.redirect('/sites.html');
   console.log(badSites);
 });
 
 app.get('/desktop.json', function (req, res) {
   res.end(JSON.stringify(badPrograms));
-})
-
-app.post('/desktop.html',function(req,res){
-  var file = req.body.file;
-  if(file != null && file.length>0){  
-    badPrograms.push(file);
-  }
-  res.redirect('/desktop.html');
-  console.log(badPrograms);
 });
+
+app.post('/desktop.html',function(req,res) {
+    badPrograms = Array.from(new Set(Object.keys(req.body)));
+    fs.writeFile('desktop.json', JSON.stringify(badPrograms), (err) => {
+        if(err)
+            throw err;
+    }); 
+    console.log();
+    res.redirect('/desktop.html');
+    console.log(badPrograms);
+});
+
