@@ -2,18 +2,25 @@
 
 Remember to set up the python virtual environment and install the required packages.
 
-python 3:
-- remember to use virtualenv
-- pyqt5
+# Setup
+You will require Python 3 and Node.js to run.  They will require additional packages to be installed at `./.
 
-node:
-remember to use install --save to install the npm packages
-- bodyParser
-- express
-- httpProxy
-- request
+## Python 3
+It is recommended to use `virtualenv`.
+```
+$ pip install pyqt5
+```
 
-remember to run using:
+## Node.js
+It is recommended to save packages locally with `npm install --save`.
+```
+$ npm install --save request
+$ npm install --save httpProxy
+$ npm install --save bodyParser
+$ npm install --save express
+```
+
+# Run
 - cd site
 - node main.js
 - to kill, use ctrl-c, then pkill -9 python
