@@ -103,14 +103,28 @@
     <div class="jumbotron py-3">
         <div class="input-group">
             <div class="input-group-prepend">
-                <span class="input-group-text">Upload</span>
+                <button class="btn btn-outline-secondary" type="button">Upload</button>
             </div>
             <div class="custom-file">
-                <input type="file" class="custom-file-input" id="inputGroupFile01">
-                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                <input type="file" class="custom-file-input" id="real-file">
+                <label class="custom-file-label" for="inputGroupFile01" id="custom-text">No file chosen yet</label>
             </div>
         </div>
     </div>
+
+    <script type="text/javascript">
+        const realFileButton = document.getElementById("real-file");
+        const customText = document.getElementById("custom-text")
+
+        realFileButton.addEventListener("change", function() {
+            if (realFileButton.value) {
+                customText.innerHTML = realFileButton.value.match(/[\/\\]([\w\d\s\.\-\(\)]+)$/)[1];
+            } else {
+                customText.innerHTML = "No File chosen yet";
+            }
+        });
+    </script>
+
 
     <div class="jumbotron py-2">
         {sites_list}
