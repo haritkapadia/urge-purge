@@ -2,6 +2,11 @@
 <html>
 
 <head>
+    <!-- import js and JQuery, Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <!-- <script type="text/javascript" src="/js/bootstrap.min.js"></script> -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <!-- meta links -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -23,7 +28,14 @@
     <script>
         hljs.initHighlightingOnLoad();
     </script>
+    <script type="text/javascript">
 
+        Promise.resolve($.getJSON('/desktop.json')).then(function(val){
+            for(var x = 0 ; x < val.length; x++){
+                $('#filesHere').append('<p id='+x+'>'+val[x]+'<p>\n');
+            }
+        });
+    </script>
     <!-- styling -->
     <style>
         html {
@@ -101,15 +113,17 @@
     </div> -->
 
     <div class="jumbotron py-3">
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <button class="btn btn-outline-secondary" type="button">Upload</button>
+        <form action="/desktop.html" method="POST" class="form-inline">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary" type="submit">Upload</button>
+                </div>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="real-file" name = "file">
+                    <label class="custom-file-label" for="inputGroupFile01" id="custom-text">No file chosen yet</label>
+                </div>
             </div>
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" id="real-file">
-                <label class="custom-file-label" for="inputGroupFile01" id="custom-text">No file chosen yet</label>
-            </div>
-        </div>
+        </form>
     </div>
 
     <script type="text/javascript">
@@ -126,33 +140,8 @@
     </script>
 
 
-    <div class="jumbotron py-2">
-        {sites_list}
+    <div id="filesHere" class="jumbotron py-2">
+        
     </div>
-
-
-
-
-
-    <footer>
-        <!-- <div class="container text-center sticky-bottom" style="font-size: 1.0em;">
-		<ul class="list-unstyled list-inline text-center">
-			<li class="list-inline-item">
-				<a href="https://github.com/Ninjaclasher" class="text-dark"><i class="zoom fab fa-github fa-2x px-2"></i></a>
-			</li>
-		</ul>
-	</div>
-	<div class="text-center text-secondary" style="font-size: 14px;">
-		August Lin: Github
-	</div> -->
-
-        <div>
-            <!-- import js and JQuery, Popper.js -->
-            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-            <!-- <script type="text/javascript" src="/js/bootstrap.min.js"></script> -->
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-        </div>
-    </footer>
 
 </html>
