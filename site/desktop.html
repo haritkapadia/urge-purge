@@ -64,7 +64,7 @@
               }));
               $('#' + idx).append($('<input/>', {
                   id: 'h' + idx,
-                  placeholder: Math.floor(seconds/3600),
+                  value: Math.floor(seconds/3600),
                   name: name,
                   type: 'number',
                   min: 0,
@@ -73,7 +73,7 @@
               }));
               $('#' + idx).append($('<input/>', {
                   id: 'm' + idx,
-                  placeholder: Math.floor((seconds%3600)/60),
+                  value: Math.floor((seconds%3600)/60),
                   name: name,
                   type: 'number',
                   min: 0,
@@ -82,7 +82,7 @@
               }));
               $('#' + idx).append($('<input/>', {
                   id: 's' + idx,
-                  placeholder: (seconds%3600)%60,
+                  value: (seconds%3600)%60,
                   name: name,
                   type: 'number',
                   min: 0,
@@ -134,8 +134,8 @@
                         Settings
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="sites.html">Sites</a>
-                        <a class="dropdown-item" href="desktop.html">Desktop Programs</a>
+                        <a class="dropdown-item" href="/sites.html">Sites</a>
+                        <a class="dropdown-item" href="/desktop.html">Desktop Programs</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">Online Purchase Buttons</a>
                         <a class="dropdown-item" href="#">Forms</a>
