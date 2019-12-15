@@ -4,16 +4,16 @@
 <head>
     <!-- import js and JQuery, Popper.js -->
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.js"></script>
     <!-- <script type="text/javascript" src="/js/bootstrap.min.js"></script> -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.js"></script>
     <!-- meta links -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.css">
 
     <!-- import css links -->
     <link rel="stylesheet" href="static/styles.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
 
     <!-- import icon -->
     <link rel="icon" type="image/png" sizes="92x92" href="assets/icons/favicon.png">
@@ -49,7 +49,7 @@
     <script type="text/javascript">
       Promise.resolve($.getJSON('/desktop.json')).then(function(val){
           console.log(val);
-          const make_entry = (name, idx) => {
+          const make_entry = (name, seconds, idx) => {
               console.log(name, idx);
               $('#sitesHere').append($('<div/>', {
                   id: '' + idx,
@@ -59,8 +59,36 @@
                   id: 'i' + idx,
                   placeholder: name,
                   name: name,
-                  class: "col form-control-plaintext"
+                  class: "col form-control-plaintext",
+                  disabled:''
               }));
+              $('#' + idx).append($('<input/>', {
+                  id: 'h' + idx,
+                  placeholder: Math.floor(seconds/3600),
+                  name: name,
+                  type: 'number',
+                  min: 0,
+                  max: 23,
+                  class: "col-1 form-control-plaintext"
+              }));
+              $('#' + idx).append($('<input/>', {
+                  id: 'm' + idx,
+                  placeholder: Math.floor((seconds%3600)/60),
+                  name: name,
+                  type: 'number',
+                  min: 0,
+                  max: 59,
+                  class: "col-1 form-control-plaintext"
+              }));
+              $('#' + idx).append($('<input/>', {
+                  id: 's' + idx,
+                  placeholder: (seconds%3600)%60,
+                  name: name,
+                  type: 'number',
+                  min: 0,
+                  max: 59,
+                  class: "col-1 form-control-plaintext"
+              }));              
               const b = $('<button/>', {
                   i: 'b' + idx,
                   class: "btn btn-secondary"
@@ -75,12 +103,13 @@
           $('#linkAdd').click(() => {
               i += 1;
               console.log('#linkAdd clicked');
-              make_entry($('#linkInput')[0].value, i);
+              make_entry($('#linkInput')[0].value, 0, i);
               $('#linkInput')[0].value = '';
           });
 
           for(var x = 0; x < val.length; x++){
-              make_entry(val[i], i);
+              const key = Object.keys(val[x])[0];
+              make_entry(key, val[x][key],i);
               i += 1;
           }
       });
