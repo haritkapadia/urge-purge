@@ -14,6 +14,9 @@ from PyQt5.QtCore import Qt
 
 ex = None # a window
 
+def perror(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
 class Event:
     def __init__(self, when, duration, name, act):
         self.when = when
@@ -76,6 +79,7 @@ class App(QWidget):
         super().__init__()
         self.title = 'Woah There!'
         self.setGeometry(QStyle.alignedRect(Qt.LeftToRight, Qt.AlignCenter, self.size(), app.desktop().availableGeometry()))
+        self.msg_label = QLabel('Woah there! This is a no-no application! You can come back to this program after 15 seconds.')
         self.initUI()
         self.event = Event(0, 0, '', lambda x: None)
 
@@ -94,14 +98,14 @@ class App(QWidget):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Popup)
         _layout = QVBoxLayout()
         self.setLayout(_layout)
-        _layout.addWidget(QLabel('Woah there! This is a no-no application! You can come back to this program after 15 seconds.'))
+        _layout.addWidget(self.msg_label)
         _button = QPushButton('OK', self)
         _button.clicked.connect(self.click)
         _layout.addWidget(_button)
 
 
-kill_set = {'vi', 'geeqie', 'jupyter-console'}
-allow_set = set()
+program_kill_set = {('vi', 15), ('geeqie', 10), ('gnome-manual-duplex', 20)}
+program_allow_set = set()
 
 def kill_bad_processes(timeline,
                        kill_set,
@@ -109,26 +113,53 @@ def kill_bad_processes(timeline,
                                          'emacs',
                                          'systemd',
                                          'firefox'}):
-    global allow_set
+    global program_allow_set
     for a in psutil.process_iter():
         try:
-            nm = str(a.name())
-            if nm in allow_set:
+            nm = a.name()
+            if nm in program_allow_set:
                 continue
-            if nm not in global_blacklist and nm in kill_set:
+            if nm not in global_blacklist and nm in (l for l, r in kill_set):
                 temp = ''.join(nm)
-                print(temp, flush=True)
+                print('program killed', temp, flush=True)
                 a.kill()
+                l, r = [(l, r) for l, r in kill_set if l == temp][0]
                 def ding(progress):
-                    global allow_set
+                    global program_allow_set
                     if progress == 0:
-                        allow_set.add(temp)
+                        program_allow_set.add(temp)
                     elif progress == 1:
-                        allow_set.remove(temp)
-                ex.event = Event(timeline.now + 10, 15, temp, ding)
+                        program_allow_set.remove(temp)
+                ex.event = Event(timeline.now + r, 15, temp, ding)
+                ex.msg_label.setText('Woah there! You cannot use this program for another ' + str(r) + ' seconds!')
                 ex.show()
         except psutil.NoSuchProcess:
             pass
+
+site_block_set = {('reddit.com', 10), ('amazon.com', 15), ('dmoj.com', 20)}
+website_allow_set = set()
+
+def block_bad_websites(timeline,
+                       block_set,
+                       curr_site,
+                       global_blacklist={'localhost'}):
+    global website_allow_set
+    if curr_site not in global_blacklist and curr_site in (l for l, r in block_set):
+        temp = ''.join(curr_site)
+        l, r = [(l, r) for l, r in block_set if l == curr_site][0]
+        def ding(progress):
+            global program_allow_set
+            if progress == 0:
+                website_allow_set.add(temp)
+                print('site remove', temp, flush=True)
+                perror('python: site remove', temp)
+            elif progress == 1:
+                website_allow_set.remove(temp)
+                print('site add', temp, flush=True)
+        ex.event = Event(timeline.now + r, 15, temp, ding)
+        ex.msg_label.setText('Woah there! You cannot visit this site for another ' + str(r) + ' seconds!')
+        ex.show()
+
 
 class ProcKiller(threading.Thread):
     def __init__(self):
@@ -139,17 +170,46 @@ class ProcKiller(threading.Thread):
         timeline.start(time.process_time())
         while self.running:
             timeline.update_now(time.process_time())
-            kill_bad_processes(timeline, kill_set)
+            kill_bad_processes(timeline, program_kill_set)
             timeline.process()
+
+
+class IManager(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.running = True
+    def run(self):
+        while self.running:
+            cmd = input().split()
+            def manage_set(st, args):
+                global timeline
+                if args[0] == 'set':
+                    st.clear()
+                    for a, b in ((a, b) for a, b, i in zip(args[1:], args[2:], range(len(args))) if i % 2 == 0):
+                        st.add((a, int(b)))
+            if cmd[0] == 'site':
+                if cmd[1] == 'set':
+                    manage_set(site_block_set, cmd[1:])
+                    perror(site_block_set)
+                elif cmd[1] == 'block':
+                    block_bad_websites(timeline, site_block_set, cmd[2])
+                    perror(site_block_set, cmd[2])
+            elif cmd[0] == 'program':
+                if cmd[1] == 'set':
+                    manage_set(program_kill_set, cmd[1:])
+            elif cmd[0] == 'kill':
+                self.running = False
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = App(app)
     app.setStyle('Fusion')
-    t = ProcKiller()
+    pt = ProcKiller()
+    im = IManager()
     try:
-        t.start()
+        pt.start()
+        im.start()
         app.exec()
     except KeyboardInterrupt:
         self.running = False
