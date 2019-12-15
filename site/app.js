@@ -14,15 +14,15 @@ app.use('/', express.static(__dirname));
 http.createServer(app).listen(port);
 
 
-// app.get('/', function (req, res) {
-//   res.render('form-inline');
-//   res.sendFile('index.html');
-//   console.log(url.parse(req.body.link).host);
-// })
+app.get('/sites.json', function (req, res) {
+  res.end(JSON.stringify(badSites));
+})
 
-app.post('/',function(req,res){
+app.post('/sites.html',function(req,res){
   var link = url.parse(req.body.link).host;
-  badSites.push(link);
-  res.send('Test: ' +link);
+  if(link != null && link.length>0){  
+    badSites.push(link);
+  }
+  res.redirect('/sites.html');
   console.log(badSites);
 });
