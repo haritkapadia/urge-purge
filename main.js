@@ -5,6 +5,7 @@ const url = require("url");
 const net = require('net');
 const child_process = require('child_process');
 const readline = require('readline');
+const request = require('request');
 
 const badSites = [
     'www.youtube.com',
@@ -18,7 +19,6 @@ process.stdin.on('data', (data) => {
 
 var server = http.createServer(function (req, res) {
     var urlObj = url.parse(req.url);
-    var target = urlObj.protocol + "//" + urlObj.host;
 
     console.log("Proxy HTTP request for:", urlObj.host);
     if(badSites.includes(urlObj.host)) {
@@ -32,7 +32,8 @@ var server = http.createServer(function (req, res) {
         console.log("proxy error", err);
         res.end();
     });
-
+    
+    var target = urlObj.protocol + "//" + urlObj.host;
     proxy.web(req, res, {target: target});
 }).listen(1080);  //this is the port your clients will connect to
 
@@ -60,29 +61,31 @@ server.addListener('connect', function (req, socket, bodyhead) {
     console.log("Proxying HTTPS request for:", hostDomain, port);
 
     var proxySocket = new net.Socket();
-    proxySocket.connect(port, hostDomain, function () {
+    proxySocket.connect(port, hostDomain, () => {
         proxySocket.write(bodyhead);
-        socket.write("HTTP/" + req.httpVersion + " 200 Connection established\r\n\r\n");
+        socket.write("HTTP/" +
+                     req.httpVersion +
+                     " 200 Connection established\r\n\r\n");
     });
 
-    proxySocket.on('data', function (chunk) {
+    proxySocket.on('data', (chunk) => {
         socket.write(chunk);
     });
-    proxySocket.on('end', function () {
+    proxySocket.on('end', () => {
         socket.end();
     });
-    proxySocket.on('error', function () {
+    proxySocket.on('error', () => {
         socket.write("HTTP/" + req.httpVersion + " 500 Connection error\r\n\r\n");
         socket.end();
     });
-    socket.on('data', function (chunk) {
+    socket.on('data', (chunk) => {
         proxySocket.write(chunk);
     });
-    socket.on('end', function () {
+    socket.on('end', () => {
         proxySocket.end();
     });
 
-    socket.on('error', function () {
+    socket.on('error', () => {
         proxySocket.end();
     });
 
