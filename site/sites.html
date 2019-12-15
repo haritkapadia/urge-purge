@@ -51,19 +51,19 @@
     <nav class="navbar navbar-expand-lg navbar-expand-xl navbar-expand-md navbar-light sticky-top" style="background-color: #e3f2fd;">
         <div class="navbar-header">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainbar">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <span class="navbar-toggler-icon"></span>
+            </button>
         </div>
         <div class="collapse navbar-collapse" id="mainbar">
             <a class="navbar-brand" href="index.html">Landing Page</a>
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Settings
-                        </a>
+                        Settings
+                    </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="sites.html">Sites</a>
                         <a class="dropdown-item" href="desktop.html">Desktop Programs</a>
-                        <a class="dropdown-item" href="#">Sites</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">Online Purchase Buttons</a>
                         <a class="dropdown-item" href="#">Forms</a>
@@ -82,23 +82,23 @@
     </nav>
 
     <!-- input field -->
-    <div class="jumbotron">
-        <form class="form-inline">
-            <div class="form-group mb-2">
+    <div class="jumbotron py-3">
+        <form action="" class="form-inline">
+            <div class="form-group">
                 <label for="staticLink" class="sr-only">Link Enter</label>
                 <input type="text" readonly class="form-control-plaintext" id="staticLink" value="Enter your link: ">
             </div>
-            <div class="form-group mx-sm-3 mb-2">
+            <div class="form-group mr-sm-3">
                 <label for="linkInput" class="sr-only">Link</label>
                 <input type="Link" class="form-control" id="linkInput" placeholder="Link">
             </div>
-            <button type="submit" class="btn btn-primary mb-2">Submit</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
 
     <!-- list of current sites -->
-    <div class="jumbotron">
-
+    <div class="jumbotron py-2">
+        {sites_list}
     </div>
 
 
