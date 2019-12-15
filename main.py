@@ -10,20 +10,24 @@ import threading
 import traceback
 from urllib import parse
 
-kill_list = {'vi'}
+kill_list = {'vi', 'geeqie', 'jupyter-console'}
 
 current = set(psutil.process_iter())
 def kill_bad_processes(current,
                        kill_list,
-                       global_blacklist={'flake8', 'emacs', 'systemd'}):
+                       global_blacklist={'flake8',
+                                         'emacs',
+                                         'systemd',
+                                         'firefox'}):
     previous = current
     current = set(psutil.process_iter())
     _a = current - previous
     if len(_a) != 0:
         for a in _a:
-            print(a.name(), a.pid, a.parents())
             if a.name() not in global_blacklist and a.name() in kill_list:
+                print(a.name(), flush=True)
                 a.kill()
+    return current;
 
 
 def proxy_thread(conn, client_addr):
@@ -60,5 +64,16 @@ def server():
         print(traceback.format_exc())
         s.close()
 
-server()
-print('DIE')
+try:
+    i = 0
+    while True:
+        prev = current
+        current = kill_bad_processes(current, kill_list)
+        """
+        if prev != current:
+            i += 1
+        if i > 3:
+            break
+        """
+except KeyboardInterrupt:
+    pass
