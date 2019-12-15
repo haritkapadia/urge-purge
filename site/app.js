@@ -14,5 +14,3 @@ http.createServer(app).listen(port);
 app.post('/', function (req, resp) {
   resp.end(JSON.stringify(req.body));
 })
-
-
