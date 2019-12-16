@@ -78,8 +78,12 @@ class App(QWidget):
     def __init__(self, app):
         super().__init__()
         self.title = 'Woah There!'
+        self.setStyleSheet(open('styles.qss', 'r').read())
+        self.resize(400, 400)
         self.setGeometry(QStyle.alignedRect(Qt.LeftToRight, Qt.AlignCenter, self.size(), app.desktop().availableGeometry()))
         self.msg_label = QLabel('Woah there! This is a no-no application! You can come back to this program after 15 seconds.')
+        self.msg_label.setWordWrap(True)
+        self.msg_label.setAlignment(Qt.AlignCenter)
         self.initUI()
         self.event = Event(0, 0, '', lambda x: None)
 
@@ -131,7 +135,7 @@ def kill_bad_processes(timeline,
                     elif progress == 1:
                         program_allow_set.remove(temp)
                 ex.event = Event(timeline.now + r, 15, temp, ding)
-                ex.msg_label.setText('Woah there! You cannot use this program for another ' + str(r) + ' seconds!')
+                ex.msg_label.setText('Woah there! You cannot use ' + l + ' for another ' + str(r) + ' seconds!')
                 ex.show()
         except psutil.NoSuchProcess:
             pass
@@ -157,7 +161,7 @@ def block_bad_websites(timeline,
                 website_allow_set.remove(temp)
                 print('site add', temp, flush=True)
         ex.event = Event(timeline.now + r, 15, temp, ding)
-        ex.msg_label.setText('Woah there! You cannot visit this site for another ' + str(r) + ' seconds!')
+        ex.msg_label.setText('Woah there! You cannot visit ' + l + ' for another ' + str(r) + ' seconds!')
         ex.show()
 
 

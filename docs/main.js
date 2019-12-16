@@ -35,11 +35,12 @@ platform.stdout.on('data', (data) => {
     if (cmd[0] == 'site') {
         if (cmd[1] == 'remove') {
             const pos = transform(badSites).indexOf(cmd[2]);
-            removedSites.push(badSites[pos]);
+            if(removedSites.indexOf(badSites[pos]) == -1)
+                removedSites.push(badSites[pos]);
         } else if (cmd[1] == 'add') {
             const pos = transform(badSites).indexOf(cmd[2]);
-            removedSites.push(badSites[pos]);
-            removedSites.filter(e => e != badSites[pos]);
+            const remove = removedSites.indexOf(badSites[pos]);
+            removedSites.splice(remove, 1);
         }
     }
     console.log(cmd);
@@ -68,6 +69,7 @@ platform.stdin.write(message2, (err) => {
 
 var server = http.createServer(function(req, res) {
     var urlObj = url.parse(req.url);
+    let target = urlObj.protocol + "//" + urlObj.host;
 
     console.log("Proxy HTTP request for:", urlObj.host);
     if (transform(badSites).indexOf(urlObj.host) != -1 && transform(removedSites).indexOf(urlObj.host) == -1) {
@@ -75,19 +77,24 @@ var server = http.createServer(function(req, res) {
             if (err)
                 throw err;
         });
-        res.end();
-        return;
-    } else {
-        var proxy = httpProxy.createProxyServer({});
-        proxy.on('error', (err, req, res) => {
-            console.log("proxy error", err);
-            res.end();
-        });
-
-        var target = urlObj.protocol + "//" + urlObj.host;
-        proxy.web(req, res, { target: target });
+        target = 'http://localhost:8081';
     }
+    const proxy = httpProxy.createProxyServer({});
+    proxy.on('error', (err, req, res) => {
+        console.log("proxy error", err);
+        res.end();
+    });
+
+    proxy.web(req, res, { target: target });
 }).listen(1080); //this is the port your clients will connect to
+
+http.createServer((req, res) => {
+    fs.readFile('not_now.html', (err, file) => {
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.write(file);
+        res.end();
+    });
+}).listen(8081);
 
 var regex_hostport = /^([^:]+)(:([0-9]+))?$/;
 
@@ -239,3 +246,7 @@ app.post('/desktop.html', function(req, res) {
     res.redirect('/desktop.html');
     // console.log(badSites);
 });
+
+app.get('*', (req, res) => {
+    res.redirect('/not_now.html');
+})

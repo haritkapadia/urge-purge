@@ -31,4 +31,4 @@ $ cd docs
 $ . bin/activate
 (docs) $ node main.js
 ```
-To stop the server, simply press Ctrl-C.
+To stop the server and the rest of the program, simply press Ctrl-C.
