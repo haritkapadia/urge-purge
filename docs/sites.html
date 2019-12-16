@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- import js and JQuery, Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.js"></script>
+    <!-- <script type="text/javascript" src="/js/bootstrap.min.js"></script> -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.js"></script>
+    <!-- meta links -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.css">
+
+    <!-- import css links -->
+    <link rel="stylesheet" href="static/styles.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+
+    <!-- import icon -->
+    <link rel="icon" type="image/png" sizes="92x92" href="assets/icons/favicon.png">
+
+    <!-- import code blocks -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+
+    <!-- import code blocks highlighting -->
+    <link rel="stylesheet" href="static/highlight/styles/dracula.css">
+    <script src="static/highlight/highlight.pack.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
+
+    <!-- styling -->
+    <style>
+        html {
+            position: relative;
+            min-height: 100%
+        }
+        
+        body {
+            margin-bottom: 100px;
+        }
+        /*.footer {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			height: 100px;
+		}*/
+    </style>
+    <script type="text/javascript">
+        Promise.resolve($.getJSON('/sites.json')).then(function(val) {
+            console.log('val', val);
+            console.log("WHAT THE FUCK IS GOING ON OVER THERE");
+            const make_entry = (name, seconds, idx) => {
+                console.log("WHAT THE FUCK IS GOING ON OVER HERE");
+                console.log(name, idx);
+                console.log(seconds);
+                console.log(Math.floor(seconds / 3600));
+                console.log(Math.floor((seconds % 3600) / 60));
+                console.log(Math.floor(((seconds % 3600) % 60) / 60));
+                $('#sitesHere').append($('<div/>', {
+                    id: '' + idx,
+                    class: "form-group row"
+                }));
+                $('#' + idx).append($('<input/>', {
+                    id: 'i' + idx,
+                    placeholder: name,
+                    name: name,
+                    class: "col form-control-plaintext",
+                    disabled: ''
+                }));
+                $('#' + idx).append($('<input/>', {
+                    id: 'h' + idx,
+                    value: Math.floor(seconds / 3600),
+                    name: name,
+                    type: 'number',
+                    style: "text-align: right",
+                    min: 0,
+                    max: 23,
+                    class: "col-1 form-control-plaintext"
+                }), $('<span/>', {
+                    text: 'H',
+                    style: "padding-top: 0.5em"
+                }));
+                $('#' + idx).append($('<input/>', {
+                    id: 'm' + idx,
+                    value: Math.floor((seconds % 3600) / 60),
+                    name: name,
+                    type: 'number',
+                    style: "text-align: right",
+                    min: 0,
+                    max: 59,
+                    class: "col-1 form-control-plaintext"
+                }), $('<span/>', {
+                    text: 'M',
+                    style: "padding-top: 0.5em"
+                }));
+                $('#' + idx).append($('<input/>', {
+                    id: 's' + idx,
+                    value: (seconds % 3600) % 60,
+                    name: name,
+                    type: 'number',
+                    style: "text-align: right",
+                    min: 0,
+                    max: 59,
+                    class: "col-1 form-control-plaintext"
+                }), $('<span/>', {
+                    text: 'S',
+                    style: "padding-top: 0.5em; padding-right: 2em"
+                }));
+                const b = $('<button/>', {
+                    i: 'b' + idx,
+                    class: "btn btn-secondary"
+                });
+                b.append('X');
+                b.click(() => {
+                    b.parent().remove();
+                });
+                $('#' + idx).append(b);
+            };
+            let i = 0;
+            $('#linkAdd').click(() => {
+                i += 1;
+                console.log('#linkAdd clicked');
+                make_entry($('#linkInput')[0].value, 0, i);
+                $('#linkInput')[0].value = '';
+            });
+            console.log(val);
+            for (var x = 0; x < val.length; x++) {
+                const key = Object.keys(val[x])[0];
+                make_entry(key, val[x][key], i);
+                i += 1;
+            }
+        });
+    </script>
+    <title>Urge Purge</title>
+</head>
+
+<body>
+    <!-- nav bar -->
+    <!-- <nav class="navbar navbar-expand-lg navbar-expand-xl navbar-expand-md navbar-light bg-light shadow-sm sticky-top" style="background-color: #e3f2fd;"> -->
+    <nav class="navbar navbar-expand-lg navbar-expand-xl navbar-expand-md navbar-light sticky-top" style="background-color: #e3f2fd;">
+        <div class="navbar-header">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse" id="mainbar">
+            <a class="navbar-brand" href="index.html">Landing Page</a>
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Edit Lists
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/sites.html">Sites</a>
+                        <a class="dropdown-item" href="/desktop.html">Desktop Programs</a>
+                        <!-- <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Online Purchase Buttons</a>
+                        <a class="dropdown-item" href="#">Forms</a> -->
+                    </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                <li>
+                    <div id="selector" class="btn-group">
+                        <button type="button" class="btn active">Blacklist</button>
+                        <button type="button" class="btn">Whitelist</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- input field -->
+    <div class="jumbotron py-3">
+        <form action="/sites.html" method="POST" class="form">
+            <div class="form-group">
+                <label for="linkInput">Enter the full address of the links here that you wish to block, the root domain will automatically be detected:</label>
+                <div class="row form-group">
+                    <input type="Link" class="col form-control" id="linkInput" placeholder="Link">
+                    <button id="linkAdd" class="btn btn-info" type="button">Add</button>
+                </div>
+            </div>
+
+            <!-- list of current sites -->
+            <div class="form-group">
+                <div id="sitesHere" class="jumbotron py-2" />
+            </div>
+
+            <div class="btn-group" role="group">
+                <button class="btn btn-light" type="button" onclick="window.location.href = '/sites.html'">Cancel</button>
+                <button class="btn btn-primary" type="submit">Save Changes</button>
+            </div>
+        </form>
+    </div>
+    <footer>
+
+    </footer>
+
+</html>
